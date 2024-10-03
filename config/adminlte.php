@@ -334,43 +334,39 @@ return [
             'icon' => 'fas fa-fw fa-lock',
         ],
         [
-            'text' => 'multilevel',
+            'text' => 'Bangun Datar',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Segi Empat',
+                    'url' => '/segi-empat/input',
                 ],
+
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'text' => 'Segitiga',
+                    'url' => '/segitiga-siku/input',
                 ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
+
             ],
         ],
+
+        [
+            'text' => 'Bangun Ruang',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Balok',
+                    'url' => '/segi-empat/inputBalok',
+                ],
+
+                [
+                    'text' => 'Limas',
+                    'url' => '/segitigas-siku/inputLimas',
+                ],
+
+            ],
+        ],
+
         ['header' => 'labels'],
         [
             'text' => 'important',
