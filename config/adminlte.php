@@ -366,7 +366,23 @@ return [
 
             ],
         ],
+        [
+            'text' => 'Akreditasi',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Akreditasi',
+                    'url' => '/akreditasi/index',
+                ],
 
+                [
+                    'text' => 'Segitiga',
+                    'url' => '/segitiga-siku/input',
+                ],
+
+            ],
+        ],
+        
         ['header' => 'labels'],
         [
             'text' => 'important',

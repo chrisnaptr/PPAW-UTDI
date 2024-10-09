@@ -34,3 +34,11 @@ Route::get('segitiga-siku/hasil',[\App\Http\Controllers\SegitigaSikuController::
 Route::get('segitiga-siku/inputLimas', [\App\Http\Controllers\SegitigaSikuController::class,'inputLimas'])->name('segitiga-siku.inputLimas');
 
 Route::get('segitiga-siku/hasilLimas',[\App\Http\Controllers\SegitigaSikuController::class,'hasilLimas'])->name('segitiga-siku.hasilLimas');
+
+Route::get('akreditasi/index', [\App\Http\Controllers\AkreditasiController::class,'index'])->name('akreditasi.index');
+
+Route::get('akreditasi/create', [\App\Http\Controllers\AkreditasiController::class,'create'])->name('akreditasi.create');
+
+Route::get('akreditasi/', [\App\Http\Controllers\AkreditasiController::class,'create'])->name('akreditasi.create');
+
+Route::resource('/akreditasi', \App\Http\Controllers\AkreditasiController::class);
