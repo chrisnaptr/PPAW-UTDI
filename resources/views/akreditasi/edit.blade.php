@@ -39,29 +39,45 @@
                             @method('PUT')
 
                             <div class="form-group">
-                                <label class="font-weight-bold">GAMBAR SK AKREDITASI</label>
-                                <input type="file" class="form-control @error('pdf') is-invalid @enderror" name="pdf">
-                            
+                                <label class="font-weight-bold">FILE SK AKREDITASI</label>
+                                <input type="file" class="form-control @error('pdf') is-invalid @enderror" name="pdf" id="pdfInput" onchange="updateFileName()">
+                                
                                 <!-- error message untuk gambar -->
                                 @error('pdf')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
                                     </div>
                                 @enderror
+                                
+                                <!-- Menampilkan nama file yang diupload -->
+                                <small id="fileName" class="form-text text-muted mt-2"></small>
                             </div>
+                            
+                            <script>
+                            function updateFileName() {
+                                const input = document.getElementById('pdfInput');
+                                const fileNameDisplay = document.getElementById('fileName');
+                            
+                                if (input.files.length > 0) {
+                                    fileNameDisplay.textContent = input.files[0].name;
+                                } else {
+                                    fileNameDisplay.textContent = '';
+                                }
+                            }
+                            </script>
 
                             <div class="form-group">
                                 <label class="font-weight-bold">PROGRAM STUDI</label>
                                 <select class="form-control @error('prodi') is-invalid @enderror" name="prodi">
-                                    <option value="Program Studi Teknik Geologi-S2" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Geologi-S2' ? 'selected' : '' }}>Program Studi Teknik Geologi-S2</option>
-                                    <option value="Program Studi Teknik Sipil-S1" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Sipil-S1' ? 'selected' : '' }}>Program Studi Teknik Sipil-S1</option>
-                                    <option value="Program Studi Teknik Mesin-S1" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Mesin-S1' ? 'selected' : '' }}>Program Studi Teknik Mesin-S1</option>
-                                    <option value="Program Studi Teknik Elektro-S1" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Elektro-S1' ? 'selected' : '' }}>Program Studi Teknik Elektro-S1</option>
-                                    <option value="Program Studi Teknik Geologi-S1" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Geologi-S1' ? 'selected' : '' }}>Program Studi Teknik Geologi-S1</option>
-                                    <option value="Program Studi Perencanaan Wilayah dan Kota" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Perencanaan Wilayah dan Kota' ? 'selected' : '' }}>Program Studi Perencanaan Wilayah dan Kota</option>
-                                    <option value="Program Studi Teknik Pertambangan-S1" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Pertambangan-S1' ? 'selected' : '' }}>Program Studi Teknik Pertambangan-S1</option>
-                                    <option value="Program Studi Teknik Mesin-D3" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Mesin-D3' ? 'selected' : '' }}>Program Studi Teknik Mesin-D3</option>
-                                    <option value="Program Studi Teknik Elektronika-D3" {{ old('prodi', $akreditasi->prodi) == 'Program Studi Teknik Elektronika-D3' ? 'selected' : '' }}>Program Studi Teknik Elektronika-D3</option>
+                                    <option value="Magister Teknik Geologi-S2" {{ old('prodi', $akreditasi->prodi) == 'Magister Teknik Geologi-S2' ? 'selected' : '' }}>Magister Teknik Geologi-S2</option>
+                                    <option value="Teknik Sipil-S1" {{ old('prodi', $akreditasi->prodi) == 'Teknik Sipil-S1' ? 'selected' : '' }}>Teknik Sipil-S1</option>
+                                    <option value="Teknik Mesin-S1" {{ old('prodi', $akreditasi->prodi) == 'Teknik Mesin-S1' ? 'selected' : '' }}>Teknik Mesin-S1</option>
+                                    <option value="Teknik Elektro-S1" {{ old('prodi', $akreditasi->prodi) == 'Teknik Elektro-S1' ? 'selected' : '' }}>Teknik Elektro-S1</option>
+                                    <option value="Teknik Geologi-S1" {{ old('prodi', $akreditasi->prodi) == 'Teknik Geologi-S1' ? 'selected' : '' }}>Teknik Geologi-S1</option>
+                                    <option value="Perencanaan Wilayah dan Kota-S1" {{ old('prodi', $akreditasi->prodi) == 'Perencanaan Wilayah dan Kota-S1' ? 'selected' : '' }}>Perencanaan Wilayah dan Kota-S1</option>
+                                    <option value="Teknik Pertambangan-S1" {{ old('prodi', $akreditasi->prodi) == 'Teknik Pertambangan-S1' ? 'selected' : '' }}>Teknik Pertambangan-S1</option>
+                                    <option value="Teknik Mesin-D3" {{ old('prodi', $akreditasi->prodi) == 'Teknik Mesin-D3' ? 'selected' : '' }}>Teknik Mesin-D3</option>
+                                    <option value="Teknik Elektronika-D3" {{ old('prodi', $akreditasi->prodi) == 'Teknik Elektronika-D3' ? 'selected' : '' }}>Teknik Elektronika-D3</option>
                                 </select>
                             
                                 <!-- error message untuk prodi -->
@@ -109,7 +125,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-md btn-primary">UPDATE</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
+                            <a href="{{ route('akreditasi.index') }}" class="btn btn-md btn-warning">BATAL</a>
 
                         </form> 
                     </div>

@@ -53,16 +53,19 @@
                             <div class="form-group">
                                 <label class="font-weight-bold">PROGRAM STUDI</label>
                                 <select class="form-control @error('prodi') is-invalid @enderror" name="prodi">
-                                    <option value="Program Studi Teknik Geologi-S2" {{ old('prodi') == 'prodi1' ? 'selected' : '' }}>Program Studi Teknik Geologi-S2</option>
-                                    <option value="Program Studi Teknik Sipil-S1" {{ old('prodi') == 'prodi2' ? 'selected' : '' }}>Program Studi Teknik Sipil-S1</option>
-                                    <option value="Program Studi Teknik Mesin-S1" {{ old('prodi') == 'prodi3' ? 'selected' : '' }}>Program Studi Teknik Mesin-S1</option>
-                                    <option value="Program Studi Teknik Elektro-S1" {{ old('prodi') == 'prodi4' ? 'selected' : '' }}>Program Studi Teknik Elektro-S1</option>
-                                    <option value="Program Studi Teknik Geologi-S1" {{ old('prodi') == 'prodi5' ? 'selected' : '' }}>Program Studi Teknik Geologi-S1</option>
-                                    <option value="Program Studi Perencanaan Wilayah dan Kota" {{ old('prodi') == 'prodi6' ? 'selected' : '' }}>Program Studi Perencanaan Wilayah dan Kota</option>
-                                    <option value="Program Studi Teknik Pertambangan-S1" {{ old('prodi') == 'prodi7' ? 'selected' : '' }}>Program Studi Teknik Pertambangan-S1</option>
-                                    <option value="Program Studi Teknik Mesin-D3" {{ old('prodi') == 'prodi8' ? 'selected' : '' }}>Program Studi Teknik Mesin-D3</option>
-                                    <option value="Program Studi Teknik Elektronika-D3" {{ old('prodi') == 'prodi9' ? 'selected' : '' }}>Program Studi Teknik Elektronika-D3</option>
+                                    <option value="" disabled {{ old('prodi') == '' ? 'selected' : '' }}>Pilih Program Studi</option>
+                                    <option value="Magister Teknik Geologi-S2" {{ old('prodi') == 'Magister Teknik Geologi-S2' ? 'selected' : '' }}>Magister Teknik Geologi-S2</option>
+                                    <option value="Teknik Sipil-S1" {{ old('prodi') == 'Teknik Sipil-S1' ? 'selected' : '' }}>Teknik Sipil-S1</option>
+                                    <option value="Teknik Mesin-S1" {{ old('prodi') == 'Teknik Mesin-S1' ? 'selected' : '' }}>Teknik Mesin-S1</option>
+                                    <option value="Teknik Elektro-S1" {{ old('prodi') == 'Teknik Elektro-S1' ? 'selected' : '' }}>Teknik Elektro-S1</option>
+                                    <option value="Teknik Geologi-S1" {{ old('prodi') == 'Teknik Geologi-S1' ? 'selected' : '' }}>Teknik Geologi-S1</option>
+                                    <option value="Perencanaan Wilayah dan Kota-S1" {{ old('prodi') == 'Perencanaan Wilayah dan Kota-S1' ? 'selected' : '' }}>Perencanaan Wilayah dan Kota-S1</option>
+                                    <option value="Teknik Pertambangan-S1" {{ old('prodi') == 'Teknik Pertambangan-S1' ? 'selected' : '' }}>Teknik Pertambangan-S1</option>
+                                    <option value="Teknik Mesin-D3" {{ old('prodi') == 'Teknik Mesin-D3' ? 'selected' : '' }}>Teknik Mesin-D3</option>
+                                    <option value="Teknik Elektronika-D3" {{ old('prodi') == 'Teknik Elektronika-D3' ? 'selected' : '' }}>Teknik Elektronika-D3</option>
                                 </select>
+                                
+                                
                             
                                 <!-- error message untuk prodi -->
                                 @error('prodi')
@@ -109,7 +112,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
+                            <a href="{{ route('akreditasi.index') }}" class="btn btn-md btn-warning">BATAL</a>
 
                         </form> 
                     </div>

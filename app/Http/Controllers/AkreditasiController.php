@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\akreds;
+use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -16,14 +17,25 @@ class AkreditasiController extends Controller
      *
      * @return View
      */
-    public function index(): View
-    {
-        // Get akreditasi
-        $akreditasi = akreds::latest()->paginate(10);
+    public function index(Request $request): View
+{
+    $search = $request->input('search');
+    $sort = $request->input('sort', 'prodi'); // Default sort by 'prodi'
+    $order = $request->input('order', 'asc'); // Default order is ascending
 
-        // Render view with akreditasi
-        return view('akreditasi.index', compact('akreditasi'));
-    }
+    // Get akreditasi with search and sorting functionality
+    $akreditasi = akreds::when($search, function ($query) use ($search) {
+            return $query->where('prodi', 'like', '%' . $search . '%')
+                         ->orWhere('sk', 'like', '%' . $search . '%');
+        })
+        ->orderBy($sort, $order) // Apply sorting
+        ->paginate(10);
+
+    return view('akreditasi.index', compact('akreditasi', 'search', 'sort', 'order'));
+}
+
+    
+
 
     /**
      * create
@@ -53,9 +65,10 @@ class AkreditasiController extends Controller
         ]);
 
         // Upload pdf
-        $pdf = $request->file('pdf');        
-        $filename = time() . '.' . $pdf->getClientOriginalExtension();
-        $pdf->move(public_path('assets'), $filename);
+        $pdf = $request->file('pdf');
+        $filename = $pdf->getClientOriginalName(); // Ambil nama asli file
+        $pdf->move(public_path('assets'), $filename); // Pindahkan file ke direktori yang diinginkan
+
 
         // Create akreditasi
         akreds::create([
@@ -185,38 +198,64 @@ class AkreditasiController extends Controller
         return redirect()->route('akreditasi.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
 
-    /**
-     * index
-     *
-     * @return View
-     */
-    public function frontend()
-    {
-       
-        $akreditasi = akreds::latest()->paginate(4);
-       
-        //render view with akreds
-        return view('akreditasi.frontend', compact('akreditasi'));
-    }
-
-    public function search(Request $request)
+    public function userIndex(Request $request): View
     {
         $search = $request->input('search');
-        $prodi = $request->input('prodi');
-        $status = $request->input('status');
+        $sort = $request->input('sort', 'prodi'); // Default sort by 'prodi'
+        $order = $request->input('order', 'asc'); // Default order is ascending
 
-        $akreditasi = akreds::where(function ($query) use ($search, $prodi, $status) {
-            if ($search) {
-                $query->where('prodi', 'like', '%' . $search . '%');
-            }
-            if ($prodi) {
-                $query->where('prodi', $prodi);
-            }
-            if ($status) {
-                $query->where('status', $status);
-            }
-        })->paginate(4);
+        // Get akreditasi with search and sorting functionality
+        $akreditasi = akreds::when($search, function ($query) use ($search) {
+                return $query->where('prodi', 'like', '%' . $search . '%')
+                            ->orWhere('sk', 'like', '%' . $search . '%');
+            })
+            ->orderBy($sort, $order) // Apply sorting
+            ->paginate(5);
 
-        return view('akreditasi.search', compact('akreditasi'));
+        // Return view for the user frontend
+        return view('akreditasi.user', compact('akreditasi', 'search', 'sort', 'order'));
     }
+
+    public function showPdf($id)
+    {
+    // Temukan data akreditasi berdasarkan ID
+    $akreditasi = akreds::findOrFail($id);
+
+    // Asumsi bahwa field 'file_pdf' menyimpan path file PDF akreditasi
+    // Misalkan file PDF disimpan di folder storage/app/public/akreditasi/
+    $filePath = storage_path('app/public/akreditasi/' . $akreditasi->file_pdf);
+
+    // Redirect ke view baru untuk menampilkan PDF
+    return view('akreditasi.pdf', compact('akreditasi', 'filePath'));
+    }
+
+
+    // public function admin_user(Request $request)
+    // {
+    //     $akreditasi['getRecord'] = User::getRecord();
+    //     return view('akreditasi.index',$akreditasi);
+    // }
+        
+
+    // public function search(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     $prodi = $request->input('prodi');
+    //     $status = $request->input('status');
+
+    //     $akreditasi = akreds::where(function ($query) use ($search, $prodi, $status) {
+    //         if ($search) {
+    //             $query->where('prodi', 'like', '%' . $search . '%');
+    //         }
+    //         if ($prodi) {
+    //             $query->where('prodi', $prodi);
+    //         }
+    //         if ($status) {
+    //             $query->where('status', $status);
+    //         }
+    //     })->paginate(4);
+
+    //     return view('akreditasi.search', compact('akreditasi'));
+    // 
+
 }

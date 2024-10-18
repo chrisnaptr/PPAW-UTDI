@@ -13,7 +13,7 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
     |
     */
-
+    
     'title' => 'AdminLTE 3',
     'title_prefix' => '',
     'title_postfix' => '',
@@ -361,7 +361,7 @@ return [
 
                 [
                     'text' => 'Limas',
-                    'url' => '/segitigas-siku/inputLimas',
+                    'url' => '/segitiga-siku/inputLimas',
                 ],
 
             ],
@@ -371,13 +371,18 @@ return [
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'Akreditasi',
+                    'text' => 'Daftar Akreditasi',
                     'url' => '/akreditasi/index',
                 ],
 
                 [
-                    'text' => 'Segitiga',
-                    'url' => '/segitiga-siku/input',
+                    'text' => 'Tambah Akreditasi',
+                    'url' => '/akreditasi/create',
+                ],
+
+                [
+                    'text' => 'Halaman Frontend',
+                    'url' => '/akreditasi/user',
                 ],
 
             ],
