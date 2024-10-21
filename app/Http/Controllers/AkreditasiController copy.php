@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\akreds;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 
@@ -18,35 +18,19 @@ class AkreditasiController extends Controller
      *
      * @return View
      */
-    public function index(Request $request): View
-{
-    $search = $request->input('search');
-    $sort = $request->input('sort', 'prodi'); // Default sort by 'prodi'
-    $order = $request->input('order', 'asc'); // Default order is ascending
-
-    // Get akreditasi with search and sorting functionality
-    $akreditasi = akreds::when($search, function ($query) use ($search) {
-            return $query->where('prodi', 'like', '%' . $search . '%')
-                         ->orWhere('sk', 'like', '%' . $search . '%');
-        })
-        ->orderBy($sort, $order) // Apply sorting
-        ->get(); // Get all results
-
-        // Define the number of items per page
-
-        // Define the number of items per page
-        $perPage = 10;
-
-        // Manual pagination logic
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $items = $akreditasi->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $akreditasi = new LengthAwarePaginator($items, $akreditasi->count(), $perPage, $currentPage, [
-            'path' => $request->url(),
-            'query' => $request->query(),]);
-
-    return view('akreditasi.index', compact('akreditasi', 'search', 'sort', 'order'));
-}
-
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $akreditasi = akreds::select('id', 'prodi', 'sk', 'awal', 'akhir');
+            dd($akreditasi->get());
+            return DataTables::of($akreditasi)
+                ->addIndexColumn() // Menambahkan nomor urut
+                ->make(true); // Kembalikan data dalam bentuk JSON untuk DataTables
+        }
+    
+        return view('akreditasi.index');
+    }
+    
     /**
      * create
      *
@@ -220,19 +204,7 @@ class AkreditasiController extends Controller
                             ->orWhere('sk', 'like', '%' . $search . '%');
             })
             ->orderBy($sort, $order) // Apply sorting
-            ->get(); // Get all results
-
-        // Define the number of items per page
-
-        // Define the number of items per page
-        $perPage = 12;
-
-        // Manual pagination logic
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $items = $akreditasi->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $akreditasi = new LengthAwarePaginator($items, $akreditasi->count(), $perPage, $currentPage, [
-            'path' => $request->url(),
-            'query' => $request->query(),]);
+            ->paginate(5);
 
         // Return view for the user frontend
         return view('akreditasi.user', compact('akreditasi', 'search', 'sort', 'order'));
@@ -251,5 +223,33 @@ class AkreditasiController extends Controller
     return view('akreditasi.pdf', compact('akreditasi', 'filePath'));
     }
 
+
+    // public function admin_user(Request $request)
+    // {
+    //     $akreditasi['getRecord'] = User::getRecord();
+    //     return view('akreditasi.index',$akreditasi);
+    // }
+        
+
+    // public function search(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     $prodi = $request->input('prodi');
+    //     $status = $request->input('status');
+
+    //     $akreditasi = akreds::where(function ($query) use ($search, $prodi, $status) {
+    //         if ($search) {
+    //             $query->where('prodi', 'like', '%' . $search . '%');
+    //         }
+    //         if ($prodi) {
+    //             $query->where('prodi', $prodi);
+    //         }
+    //         if ($status) {
+    //             $query->where('status', $status);
+    //         }
+    //     })->paginate(4);
+
+    //     return view('akreditasi.search', compact('akreditasi'));
+    // 
 
 }

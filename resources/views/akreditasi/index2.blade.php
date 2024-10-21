@@ -1,11 +1,14 @@
 @extends('adminlte::page')
 
-@section('title','Akreditasi')
+@section('title', 'Akreditasi')
 
 @section('content')
 
 <head>
+    <!-- CSS DataTables -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
 </head>
 
 <body>
@@ -14,134 +17,89 @@
             <div class="col-md-12">
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body">
-                        <form method="GET" action="{{ route('akreditasi.index') }}" class="mb-3">
-                            <div class="input-group">
-                                {{-- Untuk search --}}
-                                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">Search</button>
-                                </div>
-                            </div>
-                        </form>
-
+                        <!-- Tombol tambah data akreditasi -->
                         <a href="{{ route('akreditasi.create') }}" class="btn btn-md btn-success mb-3">Tambah Data Akreditasi</a>
 
-                        {{-- Table Data Akreditasi --}}
-                        <table class="table table-bordered">
+                        <!-- Tabel Data Akreditasi -->
+                        <table id="akreditasi-table" class="table table-striped" style="width:100%">
                             <thead>
                                 <tr>
                                     <th scope="col">NO</th>
-                                    <th scope="col">
-                                        PROGRAM STUDI
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'prodi', 'order' => 'asc']) }}">
-                                            <i class="fas fa-arrow-up small" style="color: blue;"></i> {{-- atau gunakan blue untuk warna biru --}}
-                                        </a>
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'prodi', 'order' => 'desc']) }}">
-                                            <i class="fas fa-arrow-down small" style="color: blue;"></i> {{-- atau gunakan blue untuk warna biru --}}
-                                        </a>
-                                    </th>
-                                    <th scope="col">
-                                        NOMOR SK AKREDITASI
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'sk', 'order' => 'asc']) }}">
-                                            <i class="fas fa-arrow-up small"></i>
-                                        </a>
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'sk', 'order' => 'desc']) }}">
-                                            <i class="fas fa-arrow-down small"></i>
-                                        </a>
-                                    </th>
-                                    <th scope="col">
-                                        TANGGAL AWAL BERLAKU
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'awal', 'order' => 'asc']) }}">
-                                            <i class="fas fa-arrow-up small"></i>
-                                        </a>
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'awal', 'order' => 'desc']) }}">
-                                            <i class="fas fa-arrow-down small"></i>
-                                        </a>
-                                    </th>
-                                    <th scope="col">
-                                        TANGGAL AKHIR BERLAKU
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'akhir', 'order' => 'asc']) }}">
-                                            <i class="fas fa-arrow-up small"></i>
-                                        </a>
-                                        <a href="{{ route('akreditasi.index', ['search' => request('search'), 'sort' => 'akhir', 'order' => 'desc']) }}">
-                                            <i class="fas fa-arrow-down small"></i>
-                                        </a>
-                                    </th>
+                                    <th scope="col">PROGRAM STUDI</th>
+                                    <th scope="col">NOMOR SK AKREDITASI</th>
+                                    <th scope="col">TANGGAL AWAL BERLAKU</th>
+                                    <th scope="col">TANGGAL AKHIR BERLAKU</th>
                                     <th scope="col">SISA MASA AKREDITASI</th>
                                     <th scope="col">AKSI</th>
                                 </tr>
                             </thead>
-                            
                             <tbody>
-                                @foreach ($akreditasi as $akreds)
-                                    @php
-                                        // Set a default color
-                                        $warna = 'style=color:black;'; // Default color
-                                        
-                                        // Memasukkan Carbon ke dalam konteks
-                                        $tanggalAwal = \Carbon\Carbon::parse($akreds->awal);
-                                        $tanggalAkhir = \Carbon\Carbon::parse($akreds->akhir);
-                                        $tanggalSekarang = \Carbon\Carbon::now();
-                                        
-                                        // Menghitung sisa bulan akreditasi
-                                        $sisaBulan = $tanggalSekarang->diffInMonths($tanggalAkhir, false);
-
-                                        // Atur warna dan pesan berdasarkan sisa bulan
-                                        if ($sisaBulan > 12) {
-                                            $warna = 'style=background-color:green; color:white;';
-                                            $status = 'Masih Berlaku';
-                                            $sisaText = intval($sisaBulan / 12) . ' tahun';
-                                        }  elseif ($sisaBulan <= 12 && $sisaBulan > 0) {
-                                            $warna = 'style=background-color:yellow; color:white;';
-                                            $status = 'Segera Ajukan Re-Akreditasi';
-                                            $sisaText = intval($sisaBulan) . ' bulan';
-                                        } else {
-                                            $warna = 'style=background-color:white; color:white;';
-                                            $status = 'Sudah Kadaluarsa';
-                                            $sisaText = '';
-                                        }
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $akreds->prodi }}</td>
-                                        <td>{{ $akreds->sk }}</td>
-                                        <td>{{ $akreds->awal }}</td>
-                                        <td>{{ $akreds->akhir }}</td>
-                                        <td {!! $warna !!}>
-                                            {{-- Tampilkan sisa masa akreditasi dalam satuan bulan --}}
-                                            @if ($sisaBulan > 0)
-                                                <span>{{ $sisaText }} - {{ $status }}</span>
-                                            @else
-                                                <span>{{ $status }}</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('akreditasi.destroy', $akreds->id) }}" method="POST">
-                                                <a href="{{ route('akreditasi.show', $akreds->id) }}" class="btn btn-sm btn-dark">DETAIL</a>
-                                                <a href="{{ route('akreditasi.edit', $akreds->id) }}" class="btn btn-sm btn-primary">EDIT</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                <!-- Data akan diisi oleh DataTables via AJAX -->
                             </tbody>
                         </table>
-                        
-                        {{-- Move pagination here --}}
-                        <div class="d-flex justify-content-left">
-                            {{ $akreditasi->appends(request()->except('page'))->links() }}
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Tambahkan jQuery dan DataTables JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMN3S5T7ktN90+StlBY7C+K/zI8rJKmM+wBr79" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Inisialisasi DataTables -->
+    <script>
+        $(document).ready(function() {
+            $('#akreditasi-table').DataTable({
+                "processing": true,
+                "serverSide": true, // Aktifkan server-side processing
+                "ajax": "{{ route('akreditasi.index') }}", // URL untuk mengambil data via AJAX
+                "columns": [
+                    { "data": "id" }, // Kolom ID
+                    { "data": "prodi" }, // Kolom Program Studi
+                    { "data": "sk" }, // Kolom SK Akreditasi
+                    { "data": "awal" }, // Kolom Tanggal Awal
+                    { "data": "akhir" }, // Kolom Tanggal Akhir
+                    { 
+                        "data": null, // Kolom Sisa Masa Akreditasi
+                        "render": function(data, type, row) {
+                            let tanggalAkhir = new Date(row.akhir);
+                            let tanggalSekarang = new Date();
+                            let sisaBulan = (tanggalAkhir.getFullYear() - tanggalSekarang.getFullYear()) * 12 + (tanggalAkhir.getMonth() - tanggalSekarang.getMonth());
+                            
+                            if (sisaBulan > 12) {
+                                return Math.floor(sisaBulan / 12) + ' tahun';
+                            } else if (sisaBulan > 0) {
+                                return sisaBulan + ' bulan';
+                            } else {
+                                return 'Kadaluarsa';
+                            }
+                        }
+                    },
+                    {
+                        "data": null, // Kolom Aksi
+                        "render": function(data, type, row) {
+                            return `
+                                <a href="/akreditasi/${row.id}" class="btn btn-sm btn-dark">DETAIL</a>
+                                <a href="/akreditasi/${row.id}/edit" class="btn btn-sm btn-primary">EDIT</a>
+                                <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="/akreditasi/${row.id}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
+                                </form>
+                            `;
+                        }
+                    }
+                ],
+                "order": [[1, 'asc']], // Urutkan berdasarkan kolom kedua (prodi)
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 25, 50], // Opsi jumlah data yang ditampilkan
+                "pagingType": "full_numbers"
+            });
+        });
+    </script>
+
 </body>
+
 @endsection

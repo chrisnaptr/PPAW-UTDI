@@ -119,9 +119,28 @@
                             </tbody>
                         </table>
                         
-                        {{-- Pagination --}}
+                        {{-- Move pagination here --}}
                         <div class="d-flex justify-content-left">
-                            {{ $akreditasi->appends(request()->except('page'))->links() }}
+                            @if ($akreditasi->hasPages())
+                                <ul class="pagination">
+                                    {{-- Previous Page Link --}}
+                                    <li class="page-item {{ $akreditasi->onFirstPage() ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $akreditasi->previousPageUrl() }}" rel="prev">«</a>
+                                    </li>
+
+                                    {{-- Pagination Elements --}}
+                                    @foreach ($akreditasi->getUrlRange(1, $akreditasi->lastPage()) as $page => $url)
+                                        <li class="page-item {{ $page == $akreditasi->currentPage() ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    <li class="page-item {{ $akreditasi->hasMorePages() ? '' : 'disabled' }}">
+                                        <a class="page-link" href="{{ $akreditasi->nextPageUrl() }}" rel="next">»</a>
+                                    </li>
+                                </ul>
+                            @endif
                         </div>
                     </div>
                 </div>
