@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('pdf');
             $table->string('prodi');
             $table->string('sk');
+            $table->string('predikat');
             $table->date('awal');
             $table->date('akhir');
             $table->timestamps();

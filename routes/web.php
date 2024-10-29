@@ -43,15 +43,13 @@ Route::get('akreditasi/', [\App\Http\Controllers\AkreditasiController::class,'cr
 
 Route::get('akreditasi/user', [App\Http\Controllers\AkreditasiController::class, 'userIndex'])->name('akreditasi.user');
 
+Route::get('/akreditasi/sisa', [App\Http\Controllers\AkreditasiController::class, 'sisaAkreditasi'])->name('akreditasi.sisa');
+
 Route::get('akreditasi/{id}/pdf', [App\Http\Controllers\AkreditasiController::class, 'showPdf'])->name('akreditasi.pdf');
 
-// Route::get('frontend', [\App\Http\Controllers\FrontendController::class,'frontend'])->name('frontend');
-
-// Route::get('showfrontend', [\App\Http\Controllers\FrontendController::class, 'show'])->name('showfrontend');
+Route::get('/akreditasi/tabulasi', [App\Http\Controllers\AkreditasiController::class, 'showTabulasi'])->name('akreditasi.tabulasi');
 
 Route::resource('/akreditasi', \App\Http\Controllers\AkreditasiController::class);
 
 Route::resource('akreditasi', App\Http\Controllers\AkreditasiController::class);
-
-// Route untuk halaman akreditasi di frontend/user
 

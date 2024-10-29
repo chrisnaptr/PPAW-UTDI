@@ -9,5 +9,5 @@ class akreds extends Model
 {
     use HasFactory;
     protected $table = 'akreds'; // or whatever the actual table name is
-    protected $fillable = ['pdf', 'prodi', 'sk', 'awal', 'akhir'];
+    protected $fillable = ['pdf', 'prodi', 'sk', 'predikat', 'awal', 'akhir'];
 }

@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use App\Models\akreds;
+use Yajra\DataTables\Facades\DataTables;
+use App\Mail\AkreditasiReminderMail;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
+use Yajra\DataTables\Contracts\DataTable;
 
 class AkreditasiController extends Controller
 {
@@ -21,30 +26,29 @@ class AkreditasiController extends Controller
     public function index(Request $request): View
 {
     $search = $request->input('search');
-    $sort = $request->input('sort', 'prodi'); // Default sort by 'prodi'
-    $order = $request->input('order', 'asc'); // Default order is ascending
+    $sort = $request->input('sort', 'prodi');
+    $order = $request->input('order', 'asc');
 
-    // Get akreditasi with search and sorting functionality
     $akreditasi = akreds::when($search, function ($query) use ($search) {
             return $query->where('prodi', 'like', '%' . $search . '%')
                          ->orWhere('sk', 'like', '%' . $search . '%');
         })
-        ->orderBy($sort, $order) // Apply sorting
-        ->get(); // Get all results
+        ->orderBy($sort, $order)
+        ->get();
+    $akreditasi = akreds::latest()->paginate(10);
+    // // Periksa sisa akreditasi dan kirim email jika kurang dari 6 bulan
+    // foreach ($akreditasi as $akreds) {
+    //     $tanggalAkhir = \Carbon\Carbon::parse($akreds->akhir);
+    //     $tanggalSekarang = \Carbon\Carbon::now();
+    //     $sisaBulan = $tanggalSekarang->diffInMonths($tanggalAkhir, false);
 
-        // Define the number of items per page
+    //     if ($sisaBulan <= 6 && $sisaBulan > 0) {
+    //         // Kirim email pemberitahuan
+    //         Mail::to('admin@example.com')->send(new AkreditasiReminderMail($akreds));
+    //     }
+    // }
 
-        // Define the number of items per page
-        $perPage = 10;
-
-        // Manual pagination logic
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $items = $akreditasi->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $akreditasi = new LengthAwarePaginator($items, $akreditasi->count(), $perPage, $currentPage, [
-            'path' => $request->url(),
-            'query' => $request->query(),]);
-
-    return view('akreditasi.index', compact('akreditasi', 'search', 'sort', 'order'));
+   return view('akreditasi.index', compact('akreditasi', 'search', 'sort', 'order'));
 }
 
     /**
@@ -70,6 +74,7 @@ class AkreditasiController extends Controller
             'pdf'       => 'required|mimetypes:application/pdf|max:10000',
             'prodi'     => 'required|min:5',
             'sk'        => 'required|min:5',
+            'predikat'  => 'required|min:5',
             'awal'      => 'required|min:10',
             'akhir'     => 'required|min:10'
         ]);
@@ -85,6 +90,7 @@ class AkreditasiController extends Controller
             'pdf'       => $filename,  // Store the filename only
             'prodi'     => $request->prodi,
             'sk'        => $request->sk,
+            'predikat'  => $request->predikat,
             'awal'      => $request->awal,
             'akhir'     => $request->akhir
         ]);
@@ -137,6 +143,7 @@ class AkreditasiController extends Controller
             'pdf'       => 'mimetypes:application/pdf|max:10000',  // Not required for update
             'prodi'     => 'required|min:5',
             'sk'        => 'required|min:5',
+            'predikat'  => 'required|min:5',
             'awal'      => 'required|min:10',
             'akhir'     => 'required|min:10'
         ]);
@@ -165,6 +172,7 @@ class AkreditasiController extends Controller
                 'pdf'       => $filename,
                 'prodi'     => $request->prodi,
                 'sk'        => $request->sk,
+                'predikat'  => $request->predikat,
                 'awal'      => $request->awal,
                 'akhir'     => $request->akhir
             ]);
@@ -175,6 +183,7 @@ class AkreditasiController extends Controller
             $akreditasi->update([
                 'prodi'     => $request->prodi,
                 'sk'        => $request->sk,
+                'predikat'  => $request->predikat,
                 'awal'      => $request->awal,
                 'akhir'     => $request->akhir
             ]);
@@ -211,31 +220,18 @@ class AkreditasiController extends Controller
     public function userIndex(Request $request): View
     {
         $search = $request->input('search');
-        $sort = $request->input('sort', 'prodi'); // Default sort by 'prodi'
-        $order = $request->input('order', 'asc'); // Default order is ascending
+    $sort = $request->input('sort', 'prodi');
+    $order = $request->input('order', 'asc');
 
-        // Get akreditasi with search and sorting functionality
-        $akreditasi = akreds::when($search, function ($query) use ($search) {
-                return $query->where('prodi', 'like', '%' . $search . '%')
-                            ->orWhere('sk', 'like', '%' . $search . '%');
-            })
-            ->orderBy($sort, $order) // Apply sorting
-            ->get(); // Get all results
-
-        // Define the number of items per page
-
-        // Define the number of items per page
-        $perPage = 12;
-
-        // Manual pagination logic
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $items = $akreditasi->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $akreditasi = new LengthAwarePaginator($items, $akreditasi->count(), $perPage, $currentPage, [
-            'path' => $request->url(),
-            'query' => $request->query(),]);
-
+    $akreditasi = akreds::when($search, function ($query) use ($search) {
+            return $query->where('prodi', 'like', '%' . $search . '%')
+                         ->orWhere('sk', 'like', '%' . $search . '%');
+        })
+        ->orderBy($sort, $order)
+        ->get();
+    $akreditasi = akreds::latest()->paginate(10);
         // Return view for the user frontend
-        return view('akreditasi.user', compact('akreditasi', 'search', 'sort', 'order'));
+        return view('akreditasi.user', compact('akreditasi'));
     }
 
     public function showPdf($id)
@@ -250,6 +246,57 @@ class AkreditasiController extends Controller
     // Redirect ke view baru untuk menampilkan PDF
     return view('akreditasi.pdf', compact('akreditasi', 'filePath'));
     }
+
+    //Datatables
+    public function sisaAkreditasi(): JsonResponse
+{
+    // Get akreditasi with search and sorting functionality
+    $akreditasi = akreds::get();
+
+    return DataTables::of($akreditasi)
+        ->addIndexColumn()
+        ->addColumn('action', function($row){
+            return '<div>
+                        <button class="btn btn-sm btn-success edit" data-id="' . $row->id . '">Edit</button>
+                    </div>';
+        })
+        ->make(true);
+        return view('akreditasi.user', compact('akreditasi'));
+    }
+
+
+    public function showTabulasi(Request $request)
+{
+    $search = $request->input('search');
+    $sort = $request->input('sort', 'prodi');
+    $order = $request->input('order', 'asc');
+
+    // Query data akreditasi dengan filter pencarian dan sorting
+    $akreditasi = akreds::when($search, function ($query) use ($search) {
+            return $query->where('prodi', 'like', '%' . $search . '%')
+                         ->orWhere('sk', 'like', '%' . $search . '%');
+        })
+        ->orderBy($sort, $order)
+        ->paginate(9); // Menggunakan paginate agar bisa menggunakan pagination secara otomatis
+
+    // Menambahkan countdown untuk setiap akreditasi
+    foreach ($akreditasi as $akreds) {
+        $tanggalAkhir = Carbon::parse($akreds->akhir);
+        $tanggalSekarang = Carbon::now();
+        $sisaHari = $tanggalSekarang->diffInDays($tanggalAkhir, false);
+
+        // Simpan hasil hitungan sisa hari sebagai bagian dari objek akreditasi
+        if ($sisaHari > 0) {
+            $akreds->countdown = $sisaHari . ' hari tersisa';
+        } else {
+            $akreds->countdown = 'Sudah kadaluarsa';
+        }
+    }
+
+    return view('akreditasi.tabulasi', ['akreditasi' => $akreditasi]);
+
+    }
+
 
 
 }

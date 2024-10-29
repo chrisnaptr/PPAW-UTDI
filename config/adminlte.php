@@ -384,6 +384,10 @@ return [
                     'text' => 'Halaman Frontend',
                     'url' => '/akreditasi/user',
                 ],
+                [
+                    'text' => 'Monitoring Akreditasi',
+                    'url' => '/akreditasi/tabulasi',
+                ],
 
             ],
         ],

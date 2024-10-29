@@ -88,6 +88,25 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="font-weight-bold">PREDIKAT AKREDITASI</label>
+                                <select class="form-control @error('predikat') is-invalid @enderror" name="predikat">
+                                    <option value="" disabled {{ old('predikat') == '' ? 'selected' : '' }}>Pilih Predikat Akreditasi</option>
+                                    <option value="Unggul" {{ old('predikat') == 'Unggul' ? 'selected' : '' }}>Unggul</option>
+                                    <option value="Baik Sekali(B)" {{ old('predikat') == 'Baik Sekali(B)' ? 'selected' : '' }}>Baik Sekali(B)</option>
+                                    <option value="Baik(C)" {{ old('predikat') == 'Baik(C)' ? 'selected' : '' }}>Baik(C)</option>
+                                    <option value="Terakreditasi" {{ old('predikat') == 'Terakreditasi' ? 'selected' : '' }}>Terakreditasi</option>
+                                    <option value="Tidak Terakreditasi" {{ old('predikat') == 'Tidak Terakreditasi' ? 'selected' : '' }}>Tidak Terakreditasi</option>
+                                </select>
+
+                                <!-- error message untuk predikat -->
+                                @error('predikat')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
                                 <label class="font-weight-bold">Tanggal Awal SK Akreditasi</label>
                                 <input type="date" class="col-3 form-control @error('awal') is-invalid @enderror" name="awal" value="{{ old('awal') }}" placeholder="Tanggal Awal Berlaku">
                             
